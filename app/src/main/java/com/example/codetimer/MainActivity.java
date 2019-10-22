@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.util.Log;
@@ -15,6 +16,7 @@ import com.example.codetimer.Support.ItemType;
 import com.example.codetimer.Support.ListElement;
 import com.example.codetimer.Support.ListElementAdapter;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 
@@ -37,7 +39,8 @@ public class MainActivity extends AppCompatActivity {
         ListElement end = new ListElement("LOOPEND", ItemType.LOOPEND);
         ListElement temp = new ListElement("LOOP", ItemType.LOOPSTART);
         temp.setNumber(3);
-        temp.setEndElement(end);
+        temp.setrelatedElement(end);
+        end.setrelatedElement(temp);
         elements.add(temp);
         elements.add(new ListElement("NiceTimer", ItemType.TIMER));
         elements.add(new ListElement("NiceTimer", ItemType.TIMER));
@@ -49,19 +52,36 @@ public class MainActivity extends AppCompatActivity {
 
 
         ItemTouchHelper helper = new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(ItemTouchHelper.DOWN | ItemTouchHelper.UP,0){
+            @Override
             public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
                 int pos_dragged = viewHolder.getAdapterPosition();
                 int pos_target = target.getAdapterPosition();
 
-                if (elements.get(pos_dragged).getEndElement() == elements.get(pos_target)){
-                    Log.v("Overstepped Boudnds","AWPDOJAWDOPAJWDAPWODJAWD");
+                //MAKE STARTLOOPS NOT FUCK THEM SELF
+                if (elements.get(pos_dragged).getType() == ItemType.LOOPSTART && elements.get(pos_dragged).getrelatedElement() == elements.get(pos_target)){
+                    //If its at the Bottom
+                    if (elements.size() - 1 == pos_target){ return true; }
+                    //Don't let the loop fuck up
+                    Collections.swap(elements, pos_target, pos_target + 1);
+                    mAdapter.notifyItemMoved(pos_target, pos_target + 1);
                 }
+                //MAKE ENDLOOP NOT FUCK THEM SELF
+                if (elements.get(pos_dragged).getType() == ItemType.LOOPEND && elements.get(pos_dragged).getrelatedElement() == elements.get(pos_target)){
+                    if (pos_target == 0){
+                        return true;
+                    }
+
+                    Collections.swap(elements, pos_target, pos_target - 1);
+                    mAdapter.notifyItemMoved(pos_target, pos_target - 1);
+                }
+
+
+
+
+
                 //Swap Items
                 Collections.swap(elements, pos_dragged, pos_target);
-
-
                 mAdapter.notifyItemMoved(pos_dragged, pos_target);
-                Log.v("ItemTouchHelper", elements.toString());
                 return true;
             }
 

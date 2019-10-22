@@ -6,7 +6,7 @@ public class ListElement {
     private String name;
     private ItemType type;
     private long number = 0;
-    private ListElement endElement = null;
+    private ListElement relatedElement = null;
     private int depth = 1;
 
     public ListElement(String name, ItemType type){
@@ -50,8 +50,8 @@ public class ListElement {
         this.number = number;
     }
 
-    public void setEndElement(ListElement endElement) {
-        this.endElement = endElement;
+    public void setrelatedElement(ListElement endElement) {
+        this.relatedElement = endElement;
     }
 
     public String getName() {
@@ -62,7 +62,7 @@ public class ListElement {
         return type;
     }
 
-    public ListElement getEndElement() {
-        return endElement;
+    public ListElement getrelatedElement() {
+        return relatedElement;
     }
 }
