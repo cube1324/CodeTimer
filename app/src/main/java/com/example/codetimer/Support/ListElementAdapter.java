@@ -50,9 +50,10 @@ public class ListElementAdapter extends RecyclerView.Adapter<ListElementViewHold
                 break;
             case 1:
                 v = inf.inflate(R.layout.list_element_loopstart_view, parent, false);
-                Log.v("REPEAT VIEW", v.findViewById(R.id.repeat_view).toString());
                 break;
             case 2:
+                v = inf.inflate(R.layout.list_element_loopend_view, parent, false);
+                break;
             default:
                 v = inf.inflate(R.layout.list_element_timer_view, parent, false);
                 break;
@@ -68,8 +69,12 @@ public class ListElementAdapter extends RecyclerView.Adapter<ListElementViewHold
             case TIMER:
                 holder.duration_view.setText(currentElement.getNumber());
                 holder.name_view.setText(currentElement.getName());
+                break;
             case LOOPSTART:
-                //holder.repeat_view.setText(currentElement.getNumber());
+                holder.repeat_view.setText(currentElement.getNumber());
+                holder.name_view.setText(currentElement.getName());
+                break;
+            case LOOPEND:
                 holder.name_view.setText(currentElement.getName());
         }
 

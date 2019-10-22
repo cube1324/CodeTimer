@@ -34,11 +34,15 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(layoutManager);
 
         elements = new LinkedList<>();
+        ListElement end = new ListElement("LOOPEND", ItemType.LOOPEND);
         ListElement temp = new ListElement("LOOP", ItemType.LOOPSTART);
         temp.setNumber(3);
+        temp.setEndElement(end);
         elements.add(temp);
         elements.add(new ListElement("NiceTimer", ItemType.TIMER));
         elements.add(new ListElement("NiceTimer", ItemType.TIMER));
+
+        elements.add(end);
 
         mAdapter = new ListElementAdapter(elements);
         recyclerView.setAdapter(mAdapter);
@@ -49,8 +53,12 @@ public class MainActivity extends AppCompatActivity {
                 int pos_dragged = viewHolder.getAdapterPosition();
                 int pos_target = target.getAdapterPosition();
 
+                if (elements.get(pos_dragged).getEndElement() == elements.get(pos_target)){
+                    Log.v("Overstepped Boudnds","AWPDOJAWDOPAJWDAPWODJAWD");
+                }
                 //Swap Items
                 Collections.swap(elements, pos_dragged, pos_target);
+
 
                 mAdapter.notifyItemMoved(pos_dragged, pos_target);
                 Log.v("ItemTouchHelper", elements.toString());
