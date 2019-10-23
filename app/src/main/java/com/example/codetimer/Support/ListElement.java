@@ -38,8 +38,8 @@ public class ListElement {
         return depth;
     }
 
-    public void setDepth(int depth){
-        this.depth = depth;
+    public void incDepthBy(int depth){
+        this.depth += depth;
     }
 
     public void setName(String name) {
