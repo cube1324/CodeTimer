@@ -26,6 +26,8 @@ public class MainActivity extends AppCompatActivity {
     private ListElementAdapter mAdapter;
     private RecyclerView.LayoutManager layoutManager;
     private LinkedList<ListElement> elements;
+
+    private static int INDENT_INCEREMNT = 2;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,6 +51,13 @@ public class MainActivity extends AppCompatActivity {
         elements.add(temp);
         elements.add(end);
 
+        ListElement loop = new ListElement("Reapeat", ItemType.LOOPSTART);
+        ListElement loopend = new ListElement("End Reapeat", ItemType.LOOPEND);
+        loop.setrelatedElement(loopend);
+        loopend.setrelatedElement(loop);
+        loop.setNumber(10);
+        elements.add(loop);
+        elements.add(loopend);
 
         mAdapter = new ListElementAdapter(elements);
         recyclerView.setAdapter(mAdapter);
@@ -75,15 +84,24 @@ public class MainActivity extends AppCompatActivity {
                         if (elements.size() - 1 == pos_target) {
                             return true;
                         }
+                        //Check indent
+                        if (elements.get(pos_target + 1).getType() == ItemType.LOOPSTART){
+                            elements.get(pos_target).incDepthBy(INDENT_INCEREMNT);
+                        }
+                        if (elements.get(pos_target + 1).getType() == ItemType.LOOPEND){
+                            elements.get(pos_target).incDepthBy(-INDENT_INCEREMNT);
+                        }
+
+
                         //Don't let the loop fuck up
                         Collections.swap(elements, pos_target, pos_target + 1);
                         mAdapter.notifyItemMoved(pos_target, pos_target + 1);
                     //Fix indent of Elements
                     } else {
                         if (pos_dragged < pos_target){
-                            elements.get(pos_target).incDepthBy(-2);
+                            elements.get(pos_target).incDepthBy(-INDENT_INCEREMNT);
                         } else {
-                            elements.get(pos_target).incDepthBy(2);
+                            elements.get(pos_target).incDepthBy(INDENT_INCEREMNT);
                         }
                     }
 
@@ -96,16 +114,25 @@ public class MainActivity extends AppCompatActivity {
                         if (pos_target == 0) {
                             return true;
                         }
+                        //CHeck Indent
+                        //Check indent
+                        if (elements.get(pos_target - 1).getType() == ItemType.LOOPSTART){
+                            elements.get(pos_target).incDepthBy(-INDENT_INCEREMNT);
+                        }
+                        if (elements.get(pos_target - 1).getType() == ItemType.LOOPEND){
+                            elements.get(pos_target).incDepthBy(INDENT_INCEREMNT);
+                        }
 
+                        //Push Loopstart up
                         Collections.swap(elements, pos_target, pos_target - 1);
                         mAdapter.notifyItemMoved(pos_target, pos_target - 1);
 
                     //Fix Element indent
                     } else {
                         if (pos_dragged < pos_target){
-                            elements.get(pos_target).incDepthBy(2);
+                            elements.get(pos_target).incDepthBy(INDENT_INCEREMNT);
                         } else {
-                            elements.get(pos_target).incDepthBy(-2);
+                            elements.get(pos_target).incDepthBy(-INDENT_INCEREMNT);
                         }
                     }
                 }
@@ -113,17 +140,17 @@ public class MainActivity extends AppCompatActivity {
                 //Fix Element indent
                 if (elements.get(pos_target).getType() == ItemType.LOOPSTART){
                     if (pos_target > pos_dragged){
-                        elements.get(pos_dragged).incDepthBy(2);
+                        elements.get(pos_dragged).incDepthBy(INDENT_INCEREMNT);
                     } else {
-                        elements.get(pos_dragged).incDepthBy(-2);
+                        elements.get(pos_dragged).incDepthBy(-INDENT_INCEREMNT);
                     }
                 }
 
                 if (elements.get(pos_target).getType() == ItemType.LOOPEND){
                     if (pos_target > pos_dragged){
-                        elements.get(pos_dragged).incDepthBy(-2);
+                        elements.get(pos_dragged).incDepthBy(-INDENT_INCEREMNT);
                     } else {
-                        elements.get(pos_dragged).incDepthBy(2);
+                        elements.get(pos_dragged).incDepthBy(INDENT_INCEREMNT);
                     }
                 }
 

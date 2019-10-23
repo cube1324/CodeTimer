@@ -69,6 +69,7 @@ public class ListElementAdapter extends RecyclerView.Adapter<ListElementViewHold
             case TIMER:
                 holder.duration_view.setText(currentElement.getNumber());
                 holder.name_view.setText(currentElement.getName());
+
                 break;
             case LOOPSTART:
                 holder.repeat_view.setText(currentElement.getNumber());
@@ -83,5 +84,9 @@ public class ListElementAdapter extends RecyclerView.Adapter<ListElementViewHold
     @Override
     public int getItemCount() {
         return elements.size();
+    }
+
+    public void edit_Button(View v, ItemType type){
+
     }
 }
