@@ -2,5 +2,6 @@
     <string name="app_name">CodeTimer</string>
     <string name="edit_dialog_positiv">Apply</string>
     <string name="edit_dialog_negativ">Cancel</string>
+    <string name="edit_dialog_picker_seperate">:</string>
 
 </resources>
