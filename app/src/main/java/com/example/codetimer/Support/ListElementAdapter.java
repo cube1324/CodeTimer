@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -14,7 +15,7 @@ import com.example.codetimer.R;
 import java.util.Collections;
 import java.util.LinkedList;
 
-public class ListElementAdapter extends RecyclerView.Adapter<ListElementViewHolder> implements EditDIalog.EditDialogListner {
+public class ListElementAdapter extends RecyclerView.Adapter<ListElementViewHolder> {
     public LinkedList<ListElement> elements;
     private FragmentManager mFragementManager;
     public ListElementAdapter(LinkedList<ListElement> initialElements, FragmentManager manager){
@@ -95,13 +96,7 @@ public class ListElementAdapter extends RecyclerView.Adapter<ListElementViewHold
     }
 
     public void openDialog(ListElementViewHolder holder){
-        EditDIalog d = new EditDIalog(holder);
+        ListElementEditDialog d = new ListElementEditDialog();
         d.show(mFragementManager, "Text");
-    }
-
-
-    @Override
-    public void applyData(String name, ListElementViewHolder holder) {
-
     }
 }

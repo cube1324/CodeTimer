@@ -2,6 +2,7 @@ package com.example.codetimer;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.DialogFragment;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -16,12 +17,13 @@ import android.view.View;
 import com.example.codetimer.Support.ItemType;
 import com.example.codetimer.Support.ListElement;
 import com.example.codetimer.Support.ListElementAdapter;
+import com.example.codetimer.Support.ListElementEditDialog;
 
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements ListElementEditDialog.ListElementEditDialogListener {
     private RecyclerView recyclerView;
     private ListElementAdapter mAdapter;
     private RecyclerView.LayoutManager layoutManager;
@@ -191,5 +193,15 @@ public class MainActivity extends AppCompatActivity {
             }
         };
         recyclerView.addItemDecoration(margin);
+    }
+
+    @Override
+    public void onDialogPositiveClick(DialogFragment dialog) {
+
+    }
+
+    @Override
+    public void onDialogNegativeClick(DialogFragment dialog) {
+
     }
 }
