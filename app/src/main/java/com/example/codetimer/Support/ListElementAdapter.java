@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.codetimer.R;
@@ -13,10 +14,12 @@ import com.example.codetimer.R;
 import java.util.Collections;
 import java.util.LinkedList;
 
-public class ListElementAdapter extends RecyclerView.Adapter<ListElementViewHolder> {
+public class ListElementAdapter extends RecyclerView.Adapter<ListElementViewHolder> implements EditDIalog.EditDialogListner {
     public LinkedList<ListElement> elements;
-    public ListElementAdapter(LinkedList<ListElement> initialElements){
+    private FragmentManager mFragementManager;
+    public ListElementAdapter(LinkedList<ListElement> initialElements, FragmentManager manager){
         elements = initialElements;
+        mFragementManager = manager;
     }
 
     @Override
@@ -62,14 +65,19 @@ public class ListElementAdapter extends RecyclerView.Adapter<ListElementViewHold
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ListElementViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull final ListElementViewHolder holder, int position) {
         ListElement currentElement = elements.get(position);
 
         switch (currentElement.getType()){
             case TIMER:
                 holder.duration_view.setText(currentElement.getNumber());
                 holder.name_view.setText(currentElement.getName());
-
+                holder.edit_button.setOnClickListener(new View.OnClickListener(){
+                    @Override
+                    public void onClick(View v) {
+                        openDialog(holder);
+                    }
+                });
                 break;
             case LOOPSTART:
                 holder.repeat_view.setText(currentElement.getNumber());
@@ -86,7 +94,14 @@ public class ListElementAdapter extends RecyclerView.Adapter<ListElementViewHold
         return elements.size();
     }
 
-    public void edit_Button(View v, ItemType type){
+    public void openDialog(ListElementViewHolder holder){
+        EditDIalog d = new EditDIalog(holder);
+        d.show(mFragementManager, "Text");
+    }
+
+
+    @Override
+    public void applyData(String name, ListElementViewHolder holder) {
 
     }
 }

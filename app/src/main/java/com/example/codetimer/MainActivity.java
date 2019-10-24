@@ -59,16 +59,10 @@ public class MainActivity extends AppCompatActivity {
         elements.add(loop);
         elements.add(loopend);
 
-        mAdapter = new ListElementAdapter(elements);
+        mAdapter = new ListElementAdapter(elements, getSupportFragmentManager());
         recyclerView.setAdapter(mAdapter);
 
-
         ItemTouchHelper helper = new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(ItemTouchHelper.DOWN | ItemTouchHelper.UP,0){
-            @Override
-            public void onChildDraw(@NonNull Canvas c, @NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
-                super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
-            }
-
             @Override
             public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
                 //Element that is moved
@@ -77,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
                 int pos_target = target.getAdapterPosition();
 
                 //If moved Element ist a LOOPSTART
-                if (elements.get(pos_dragged).getType() == ItemType.LOOPSTART){
+                if (elements.get(pos_dragged).getType() == ItemType.LOOPSTART) {
                     //MAKE STARTLOOPS NOT FUCK THEM SELF
                     if (elements.get(pos_dragged).getrelatedElement() == elements.get(pos_target)) {
                         //If its at the Bottom
@@ -85,10 +79,10 @@ public class MainActivity extends AppCompatActivity {
                             return true;
                         }
                         //Check indent
-                        if (elements.get(pos_target + 1).getType() == ItemType.LOOPSTART){
+                        if (elements.get(pos_target + 1).getType() == ItemType.LOOPSTART) {
                             elements.get(pos_target).incDepthBy(INDENT_INCEREMNT);
                         }
-                        if (elements.get(pos_target + 1).getType() == ItemType.LOOPEND){
+                        if (elements.get(pos_target + 1).getType() == ItemType.LOOPEND) {
                             elements.get(pos_target).incDepthBy(-INDENT_INCEREMNT);
                         }
 
@@ -96,30 +90,28 @@ public class MainActivity extends AppCompatActivity {
                         //Don't let the loop fuck up
                         Collections.swap(elements, pos_target, pos_target + 1);
                         mAdapter.notifyItemMoved(pos_target, pos_target + 1);
-                    //Fix indent of Elements
+                        //Fix indent of Elements
                     } else {
-                        if (pos_dragged < pos_target){
+                        if (pos_dragged < pos_target) {
                             elements.get(pos_target).incDepthBy(-INDENT_INCEREMNT);
                         } else {
                             elements.get(pos_target).incDepthBy(INDENT_INCEREMNT);
                         }
                     }
-
-
                 }
+
                 //If Element is LOOPEND
-                if (elements.get(pos_dragged).getType() == ItemType.LOOPEND){
+                if (elements.get(pos_dragged).getType() == ItemType.LOOPEND) {
                     //Make Loop not fuck itself
                     if (elements.get(pos_dragged).getrelatedElement() == elements.get(pos_target)) {
                         if (pos_target == 0) {
                             return true;
                         }
-                        //CHeck Indent
                         //Check indent
-                        if (elements.get(pos_target - 1).getType() == ItemType.LOOPSTART){
+                        if (elements.get(pos_target - 1).getType() == ItemType.LOOPSTART) {
                             elements.get(pos_target).incDepthBy(-INDENT_INCEREMNT);
                         }
-                        if (elements.get(pos_target - 1).getType() == ItemType.LOOPEND){
+                        if (elements.get(pos_target - 1).getType() == ItemType.LOOPEND) {
                             elements.get(pos_target).incDepthBy(INDENT_INCEREMNT);
                         }
 
@@ -127,9 +119,9 @@ public class MainActivity extends AppCompatActivity {
                         Collections.swap(elements, pos_target, pos_target - 1);
                         mAdapter.notifyItemMoved(pos_target, pos_target - 1);
 
-                    //Fix Element indent
+                        //Fix Element indent
                     } else {
-                        if (pos_dragged < pos_target){
+                        if (pos_dragged < pos_target) {
                             elements.get(pos_target).incDepthBy(INDENT_INCEREMNT);
                         } else {
                             elements.get(pos_target).incDepthBy(-INDENT_INCEREMNT);
@@ -137,17 +129,36 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
 
+                //TODO Fix nested loops, rn can fuck themself
+                /*
+                if (elements.get(pos_dragged).getType() == ItemType.LOOPEND | elements.get(pos_dragged).getType() == ItemType.LOOPSTART){
+                    if (elements.get(pos_target).getType() == ItemType.LOOPEND | elements.get(pos_target).getType() == ItemType.LOOPSTART) {
+                        int pos_dragged_relative = elements.indexOf(elements.get(pos_dragged).getrelatedElement());
+                        int pos_target_relative = elements.indexOf(elements.get(pos_target).getrelatedElement());
+
+                        if (pos_dragged < pos_target){
+                            if (pos_dragged_relative < pos_target_relative){
+                                Collections.swap(elements, pos_dragged_relative, pos_target_relative);
+                                mAdapter.notifyItemMoved(pos_dragged_relative, pos_target_relative);
+                            }
+                        }else {
+
+                        }
+                    }
+                }
+
+                 */
                 //Fix Element indent
-                if (elements.get(pos_target).getType() == ItemType.LOOPSTART){
-                    if (pos_target > pos_dragged){
+                if (elements.get(pos_target).getType() == ItemType.LOOPSTART) {
+                    if (pos_target > pos_dragged) {
                         elements.get(pos_dragged).incDepthBy(INDENT_INCEREMNT);
                     } else {
                         elements.get(pos_dragged).incDepthBy(-INDENT_INCEREMNT);
                     }
                 }
 
-                if (elements.get(pos_target).getType() == ItemType.LOOPEND){
-                    if (pos_target > pos_dragged){
+                if (elements.get(pos_target).getType() == ItemType.LOOPEND) {
+                    if (pos_target > pos_dragged) {
                         elements.get(pos_dragged).incDepthBy(-INDENT_INCEREMNT);
                     } else {
                         elements.get(pos_dragged).incDepthBy(INDENT_INCEREMNT);
