@@ -1,18 +1,15 @@
 package com.example.codetimer.Support;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
-import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.codetimer.R;
 
-import java.util.Collections;
 import java.util.LinkedList;
 
 public class ListElementAdapter extends RecyclerView.Adapter<ListElementViewHolder> {
@@ -83,6 +80,13 @@ public class ListElementAdapter extends RecyclerView.Adapter<ListElementViewHold
             case LOOPSTART:
                 holder.repeat_view.setText(currentElement.getNumber());
                 holder.name_view.setText(currentElement.getName());
+                holder.edit_button.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        LoopEditDialog d = new LoopEditDialog(holder.getAdapterPosition(), holder);
+                        d.show(mFragementManager, "awd");
+                    }
+                });
                 break;
             case LOOPEND:
                 holder.name_view.setText(currentElement.getName());
@@ -96,7 +100,7 @@ public class ListElementAdapter extends RecyclerView.Adapter<ListElementViewHold
     }
 
     public void openDialog(ListElementViewHolder holder, int pos){
-        ListElementEditDialog d = new ListElementEditDialog(pos, holder);
+        TimerEditDialog d = new TimerEditDialog(pos, holder);
         d.show(mFragementManager, "Text");
     }
 }

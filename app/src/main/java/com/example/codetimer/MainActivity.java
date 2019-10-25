@@ -7,24 +7,21 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.content.ClipData;
-import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 
 import com.example.codetimer.Support.ItemType;
 import com.example.codetimer.Support.ListElement;
 import com.example.codetimer.Support.ListElementAdapter;
-import com.example.codetimer.Support.ListElementEditDialog;
+import com.example.codetimer.Support.LoopEditDialog;
+import com.example.codetimer.Support.TimerEditDialog;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.concurrent.TimeUnit;
 
-public class MainActivity extends AppCompatActivity implements ListElementEditDialog.ListElementEditDialogListener {
+public class MainActivity extends AppCompatActivity implements TimerEditDialog.TimerEditListener, LoopEditDialog.LoopEditListner {
     private RecyclerView recyclerView;
     private ListElementAdapter mAdapter;
     private RecyclerView.LayoutManager layoutManager;
@@ -168,7 +165,6 @@ public class MainActivity extends AppCompatActivity implements ListElementEditDi
                     }
                 }
 
-
                 //Swap Items
                 Collections.swap(elements, pos_dragged, pos_target);
                 mAdapter.notifyItemMoved(pos_dragged, pos_target);
@@ -197,12 +193,19 @@ public class MainActivity extends AppCompatActivity implements ListElementEditDi
     }
 
     @Override
-    public void onDialogPositiveClick(DialogFragment dialog, int pos, String name, int minutes, int seconds) {
+    public void onTimerEdit(DialogFragment dialog, int pos, String name, int minutes, int seconds) {
         ListElement element = elements.get(pos);
-
         element.setName(name);
         long milliseconds = TimeUnit.MILLISECONDS.convert(seconds, TimeUnit.SECONDS) + TimeUnit.MILLISECONDS.convert(minutes, TimeUnit.MINUTES);
         element.setNumber(milliseconds);
+        mAdapter.notifyItemChanged(pos);
+    }
+
+    @Override
+    public void onLoopEdit(int pos, String name, int number) {
+        ListElement element = elements.get(pos);
+        element.setName(name);
+        element.setNumber(number);
         mAdapter.notifyItemChanged(pos);
     }
 }
