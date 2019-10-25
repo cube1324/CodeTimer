@@ -22,6 +22,7 @@ import com.example.codetimer.Support.ListElementEditDialog;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
+import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity implements ListElementEditDialog.ListElementEditDialogListener {
     private RecyclerView recyclerView;
@@ -196,12 +197,12 @@ public class MainActivity extends AppCompatActivity implements ListElementEditDi
     }
 
     @Override
-    public void onDialogPositiveClick(DialogFragment dialog) {
+    public void onDialogPositiveClick(DialogFragment dialog, int pos, String name, int minutes, int seconds) {
+        ListElement element = elements.get(pos);
 
-    }
-
-    @Override
-    public void onDialogNegativeClick(DialogFragment dialog) {
-
+        element.setName(name);
+        long milliseconds = TimeUnit.MILLISECONDS.convert(seconds, TimeUnit.SECONDS) + TimeUnit.MILLISECONDS.convert(minutes, TimeUnit.MINUTES);
+        element.setNumber(milliseconds);
+        mAdapter.notifyItemChanged(pos);
     }
 }

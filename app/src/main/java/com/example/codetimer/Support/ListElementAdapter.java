@@ -76,7 +76,7 @@ public class ListElementAdapter extends RecyclerView.Adapter<ListElementViewHold
                 holder.edit_button.setOnClickListener(new View.OnClickListener(){
                     @Override
                     public void onClick(View v) {
-                        openDialog(holder);
+                        openDialog(holder, holder.getAdapterPosition());
                     }
                 });
                 break;
@@ -95,8 +95,8 @@ public class ListElementAdapter extends RecyclerView.Adapter<ListElementViewHold
         return elements.size();
     }
 
-    public void openDialog(ListElementViewHolder holder){
-        ListElementEditDialog d = new ListElementEditDialog();
+    public void openDialog(ListElementViewHolder holder, int pos){
+        ListElementEditDialog d = new ListElementEditDialog(pos, holder);
         d.show(mFragementManager, "Text");
     }
 }

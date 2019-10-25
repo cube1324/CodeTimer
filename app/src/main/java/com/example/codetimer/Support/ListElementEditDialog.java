@@ -22,16 +22,23 @@ import java.text.Normalizer;
 public class ListElementEditDialog extends AppCompatDialogFragment {
     private NumberPicker hour_picker;
     private NumberPicker seconds_picker;
-    public EditText edit_name;
-    public int hour;
-    public int seconds;
+    private EditText edit_name;
+    private int hour;
+    private int seconds;
+    private int pos;
+    private ListElementViewHolder holder;
+    private ListElementEditDialogListener listener;
+
 
     public interface  ListElementEditDialogListener{
-        void onDialogPositiveClick(DialogFragment dialog);
-        void onDialogNegativeClick(DialogFragment dialog);
+        void onDialogPositiveClick(DialogFragment dialog, int pos, String name, int seconds, int hour);
     }
 
-    ListElementEditDialogListener listener;
+    public ListElementEditDialog(int pos, ListElementViewHolder holder){
+        super();
+        this.pos = pos;
+        this.holder = holder;
+    }
 
     public void onAttach(Context context){
         super.onAttach(context);
@@ -52,7 +59,9 @@ public class ListElementEditDialog extends AppCompatDialogFragment {
         seconds_picker = v.findViewById(R.id.seconds_picker);
         edit_name = v.findViewById(R.id.edit_name);
 
-        hour_picker.setMaxValue(60);
+        edit_name.setText(holder.name_view.getText());
+
+        hour_picker.setMaxValue(99);
         hour_picker.setMinValue(0);
         hour_picker.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
             @Override
@@ -67,7 +76,7 @@ public class ListElementEditDialog extends AppCompatDialogFragment {
             }
         });
 
-        seconds_picker.setMaxValue(60);
+        seconds_picker.setMaxValue(59);
         seconds_picker.setMinValue(0);
         seconds_picker.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
             @Override
@@ -89,13 +98,13 @@ public class ListElementEditDialog extends AppCompatDialogFragment {
         builder.setNegativeButton(R.string.edit_dialog_negativ, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                listener.onDialogNegativeClick(ListElementEditDialog.this);
+                //empty
             }
         });
         builder.setPositiveButton(R.string.edit_dialog_positiv, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                listener.onDialogPositiveClick(ListElementEditDialog.this);
+                listener.onDialogPositiveClick(ListElementEditDialog.this, pos, edit_name.getText().toString(), hour, seconds);
             }
         });
         return builder.create();
