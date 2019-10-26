@@ -3,5 +3,6 @@
     <string name="edit_dialog_positiv">Apply</string>
     <string name="edit_dialog_negativ">Cancel</string>
     <string name="edit_dialog_picker_seperate">:</string>
-
+    <string name="action_setting">Settings</string>
+    <string name="action_add">Add</string>
 </resources>

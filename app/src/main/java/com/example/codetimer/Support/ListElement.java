@@ -1,13 +1,24 @@
 package com.example.codetimer.Support;
 
+import android.os.Parcelable;
+
+import java.io.Serializable;
 import java.util.concurrent.TimeUnit;
 
-public class ListElement {
+public class ListElement implements Serializable {
     private String name;
     private ItemType type;
     private long number = 0;
     private ListElement relatedElement = null;
     private int depth = 1;
+
+    public ListElement(String name, ItemType type, int number, ListElement relatedElement, int depth){
+        this.name = name;
+        this.type = type;
+        this.number = number;
+        this.relatedElement = relatedElement;
+        this.depth = depth;
+    }
 
     public ListElement(String name, ItemType type){
         this.name = name;

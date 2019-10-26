@@ -10,14 +10,16 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.codetimer.R;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.LinkedList;
 
 public class ListElementAdapter extends RecyclerView.Adapter<ListElementViewHolder> {
-    public LinkedList<ListElement> elements;
-    private FragmentManager mFragementManager;
-    public ListElementAdapter(LinkedList<ListElement> initialElements, FragmentManager manager){
+    public ArrayList<ListElement> elements;
+    private FragmentManager mFragmentManager;
+    public ListElementAdapter(ArrayList<ListElement> initialElements, FragmentManager manager){
         elements = initialElements;
-        mFragementManager = manager;
+        mFragmentManager = manager;
     }
 
     @Override
@@ -73,7 +75,8 @@ public class ListElementAdapter extends RecyclerView.Adapter<ListElementViewHold
                 holder.edit_button.setOnClickListener(new View.OnClickListener(){
                     @Override
                     public void onClick(View v) {
-                        openDialog(holder, holder.getAdapterPosition());
+                        TimerEditDialog d = new TimerEditDialog(holder.getAdapterPosition(), holder);
+                        d.show(mFragmentManager, "Edit Timer");
                     }
                 });
                 break;
@@ -84,7 +87,7 @@ public class ListElementAdapter extends RecyclerView.Adapter<ListElementViewHold
                     @Override
                     public void onClick(View v) {
                         LoopEditDialog d = new LoopEditDialog(holder.getAdapterPosition(), holder);
-                        d.show(mFragementManager, "awd");
+                        d.show(mFragmentManager, "Edit Loop");
                     }
                 });
                 break;
@@ -97,10 +100,5 @@ public class ListElementAdapter extends RecyclerView.Adapter<ListElementViewHold
     @Override
     public int getItemCount() {
         return elements.size();
-    }
-
-    public void openDialog(ListElementViewHolder holder, int pos){
-        TimerEditDialog d = new TimerEditDialog(pos, holder);
-        d.show(mFragementManager, "Text");
     }
 }

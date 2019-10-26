@@ -7,27 +7,43 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Context;
+import android.content.Intent;
 import android.graphics.Rect;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
+import androidx.appcompat.widget.Toolbar;
 
 import com.example.codetimer.Support.ItemType;
 import com.example.codetimer.Support.ListElement;
 import com.example.codetimer.Support.ListElementAdapter;
 import com.example.codetimer.Support.LoopEditDialog;
 import com.example.codetimer.Support.TimerEditDialog;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.gson.Gson;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.concurrent.TimeUnit;
 
-public class MainActivity extends AppCompatActivity implements TimerEditDialog.TimerEditListener, LoopEditDialog.LoopEditListner {
+public class MainActivity extends AppCompatActivity implements TimerEditDialog.TimerEditListener, LoopEditDialog.LoopEditListener {
     private RecyclerView recyclerView;
     private ListElementAdapter mAdapter;
     private RecyclerView.LayoutManager layoutManager;
-    private LinkedList<ListElement> elements;
+    private ArrayList<ListElement> elements;
+    private FloatingActionButton timer_button;
 
-    private static int INDENT_INCEREMNT = 2;
+    private static int INDENT_INCREMENT = 2;
+    public static String EXTRAMESSAGE = "MainActivity.ELEMENTS";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,7 +54,22 @@ public class MainActivity extends AppCompatActivity implements TimerEditDialog.T
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
 
-        elements = new LinkedList<>();
+        Toolbar mToolbar = findViewById(R.id.my_toolbar);
+        setSupportActionBar(mToolbar);
+
+        timer_button = findViewById(R.id.start_timer_button);
+        timer_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), TimerActivity.class);
+                //String json = new Gson().toJson(elements);
+                intent.putExtra(EXTRAMESSAGE, elements);
+                startActivity(intent);
+            }
+        });
+
+        elements = new ArrayList<>();
+
         elements.add(new ListElement("NiceTimer", ItemType.TIMER));
         elements.add(new ListElement("NiceTimer", ItemType.TIMER));
 
@@ -59,6 +90,46 @@ public class MainActivity extends AppCompatActivity implements TimerEditDialog.T
         elements.add(loop);
         elements.add(loopend);
 
+        //TODO Load on start
+        /*
+        try {
+            FileInputStream fis = openFileInput(FILENAME);
+            ObjectInputStream is = new ObjectInputStream(fis);
+            boolean cond = true;
+            while (cond){
+                ListElement obj = (ListElement) is.readObject();
+                if (obj != null){
+                    elements.add(obj);
+                }else {
+                    cond = false;
+                }
+            }
+            is.close();
+            fis.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+            elements.add(new ListElement("NiceTimer", ItemType.TIMER));
+            elements.add(new ListElement("NiceTimer", ItemType.TIMER));
+
+            ListElement end = new ListElement("LOOPEND", ItemType.LOOPEND);
+            ListElement temp = new ListElement("LOOP", ItemType.LOOPSTART);
+
+            temp.setNumber(3);
+            temp.setrelatedElement(end);
+            end.setrelatedElement(temp);
+            elements.add(temp);
+            elements.add(end);
+
+            ListElement loop = new ListElement("Reapeat", ItemType.LOOPSTART);
+            ListElement loopend = new ListElement("End Reapeat", ItemType.LOOPEND);
+            loop.setrelatedElement(loopend);
+            loopend.setrelatedElement(loop);
+            loop.setNumber(10);
+            elements.add(loop);
+            elements.add(loopend);
+        }
+
+         */
         mAdapter = new ListElementAdapter(elements, getSupportFragmentManager());
         recyclerView.setAdapter(mAdapter);
 
@@ -80,10 +151,10 @@ public class MainActivity extends AppCompatActivity implements TimerEditDialog.T
                         }
                         //Check indent
                         if (elements.get(pos_target + 1).getType() == ItemType.LOOPSTART) {
-                            elements.get(pos_target).incDepthBy(INDENT_INCEREMNT);
+                            elements.get(pos_target).incDepthBy(INDENT_INCREMENT);
                         }
                         if (elements.get(pos_target + 1).getType() == ItemType.LOOPEND) {
-                            elements.get(pos_target).incDepthBy(-INDENT_INCEREMNT);
+                            elements.get(pos_target).incDepthBy(-INDENT_INCREMENT);
                         }
 
 
@@ -93,9 +164,9 @@ public class MainActivity extends AppCompatActivity implements TimerEditDialog.T
                         //Fix indent of Elements
                     } else {
                         if (pos_dragged < pos_target) {
-                            elements.get(pos_target).incDepthBy(-INDENT_INCEREMNT);
+                            elements.get(pos_target).incDepthBy(-INDENT_INCREMENT);
                         } else {
-                            elements.get(pos_target).incDepthBy(INDENT_INCEREMNT);
+                            elements.get(pos_target).incDepthBy(INDENT_INCREMENT);
                         }
                     }
                 }
@@ -109,10 +180,10 @@ public class MainActivity extends AppCompatActivity implements TimerEditDialog.T
                         }
                         //Check indent
                         if (elements.get(pos_target - 1).getType() == ItemType.LOOPSTART) {
-                            elements.get(pos_target).incDepthBy(-INDENT_INCEREMNT);
+                            elements.get(pos_target).incDepthBy(-INDENT_INCREMENT);
                         }
                         if (elements.get(pos_target - 1).getType() == ItemType.LOOPEND) {
-                            elements.get(pos_target).incDepthBy(INDENT_INCEREMNT);
+                            elements.get(pos_target).incDepthBy(INDENT_INCREMENT);
                         }
 
                         //Push Loopstart up
@@ -122,9 +193,9 @@ public class MainActivity extends AppCompatActivity implements TimerEditDialog.T
                         //Fix Element indent
                     } else {
                         if (pos_dragged < pos_target) {
-                            elements.get(pos_target).incDepthBy(INDENT_INCEREMNT);
+                            elements.get(pos_target).incDepthBy(INDENT_INCREMENT);
                         } else {
-                            elements.get(pos_target).incDepthBy(-INDENT_INCEREMNT);
+                            elements.get(pos_target).incDepthBy(-INDENT_INCREMENT);
                         }
                     }
                 }
@@ -151,17 +222,17 @@ public class MainActivity extends AppCompatActivity implements TimerEditDialog.T
                 //Fix Element indent
                 if (elements.get(pos_target).getType() == ItemType.LOOPSTART) {
                     if (pos_target > pos_dragged) {
-                        elements.get(pos_dragged).incDepthBy(INDENT_INCEREMNT);
+                        elements.get(pos_dragged).incDepthBy(INDENT_INCREMENT);
                     } else {
-                        elements.get(pos_dragged).incDepthBy(-INDENT_INCEREMNT);
+                        elements.get(pos_dragged).incDepthBy(-INDENT_INCREMENT);
                     }
                 }
 
                 if (elements.get(pos_target).getType() == ItemType.LOOPEND) {
                     if (pos_target > pos_dragged) {
-                        elements.get(pos_dragged).incDepthBy(-INDENT_INCEREMNT);
+                        elements.get(pos_dragged).incDepthBy(-INDENT_INCREMENT);
                     } else {
-                        elements.get(pos_dragged).incDepthBy(INDENT_INCEREMNT);
+                        elements.get(pos_dragged).incDepthBy(INDENT_INCREMENT);
                     }
                 }
 
@@ -193,6 +264,29 @@ public class MainActivity extends AppCompatActivity implements TimerEditDialog.T
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.main_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.action_settings:
+
+                return true;
+
+            case R.id.action_add:
+                elements.add(new ListElement("NewTimer", ItemType.TIMER));
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
     public void onTimerEdit(DialogFragment dialog, int pos, String name, int minutes, int seconds) {
         ListElement element = elements.get(pos);
         element.setName(name);
@@ -208,4 +302,22 @@ public class MainActivity extends AppCompatActivity implements TimerEditDialog.T
         element.setNumber(number);
         mAdapter.notifyItemChanged(pos);
     }
+
+    //TODO Save on Close
+    /*
+    public void onStop(){
+        super.onStop();
+        try {
+            FileOutputStream fos = openFileOutput(FILENAME, Context.MODE_PRIVATE);
+            ObjectOutputStream os = new ObjectOutputStream(fos);
+            for (ListElement el : elements){
+                os.writeObject(el);
+            }
+            os.close();
+            fos.close();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+     */
 }

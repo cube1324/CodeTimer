@@ -22,9 +22,9 @@ public class LoopEditDialog extends AppCompatDialogFragment {
     private ListElementViewHolder holder;
     private int number;
     private int pos;
-    private LoopEditListner listener;
+    private LoopEditListener listener;
 
-    public interface LoopEditListner{
+    public interface LoopEditListener {
         void onLoopEdit(int pos, String name, int number);
     }
 
@@ -37,9 +37,9 @@ public class LoopEditDialog extends AppCompatDialogFragment {
     public void onAttach(Context context){
         super.onAttach(context);
         try {
-            listener = (LoopEditListner)context;
+            listener = (LoopEditListener)context;
         } catch (ClassCastException e){
-            throw new ClassCastException(context.toString() + " no LoopEditListner");
+            throw new ClassCastException(context.toString() + " no LoopEditListener");
         }
     }
 
