@@ -11,13 +11,15 @@ public class ListElement implements Serializable {
     private long number = 0;
     private ListElement relatedElement = null;
     private int depth = 1;
+    private int relatedIndex;
 
-    public ListElement(String name, ItemType type, int number, ListElement relatedElement, int depth){
+    public ListElement(String name, ItemType type, int number, ListElement relatedElement, int depth, int relatedIndex){
         this.name = name;
         this.type = type;
         this.number = number;
         this.relatedElement = relatedElement;
         this.depth = depth;
+        this.relatedIndex = relatedIndex;
     }
 
     public ListElement(String name, ItemType type){
@@ -45,6 +47,14 @@ public class ListElement implements Serializable {
         return r;
     }
 
+    public int getRelatedIndex() {
+        return relatedIndex;
+    }
+
+    public void setRelatedIndex(int relatedIndex) {
+        this.relatedIndex = relatedIndex;
+    }
+
     public int getDepth() {
         return depth;
     }
@@ -61,6 +71,10 @@ public class ListElement implements Serializable {
         this.number = number;
     }
 
+    public void incNumberBy(long x){
+        this.number += x;
+    }
+
     public void setrelatedElement(ListElement endElement) {
         this.relatedElement = endElement;
     }
@@ -75,5 +89,9 @@ public class ListElement implements Serializable {
 
     public ListElement getrelatedElement() {
         return relatedElement;
+    }
+
+    public long getRepetition(){
+        return this.number;
     }
 }
