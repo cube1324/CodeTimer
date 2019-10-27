@@ -29,6 +29,7 @@ public class TimerActivity extends AppCompatActivity {
     private boolean TimerRunning = false;
     private long mTimeLeft;
     private int currentPos;
+    private int mRepsLeft = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,6 +104,7 @@ public class TimerActivity extends AppCompatActivity {
                 elements.get(el.getRelatedIndex()).incNumberBy(-1);
                 return getNextPos(el.getRelatedIndex());
             }else {
+                elements.get(el.getRelatedIndex()).setNumber(elements.get(el.getRelatedIndex()).getSave_number());
                 return getNextPos(pos);
             }
         }

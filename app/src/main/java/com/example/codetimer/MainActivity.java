@@ -24,6 +24,7 @@ import com.example.codetimer.Support.TimerEditDialog;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.gson.Gson;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -44,6 +45,7 @@ public class MainActivity extends AppCompatActivity implements TimerEditDialog.T
 
     private static int INDENT_INCREMENT = 2;
     public static String EXTRAMESSAGE = "MainActivity.ELEMENTS";
+    private String FILENAME = getFilesDir() + File.separator + "data";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,6 +68,7 @@ public class MainActivity extends AppCompatActivity implements TimerEditDialog.T
                for (ListElement el : elements){
                    if (el.getType() == ItemType.LOOPEND | el.getType() == ItemType.LOOPSTART){
                        el.setRelatedIndex(elements.indexOf(el.getrelatedElement()));
+                       el.setSave_number(el.getRepetition());
                    }
                }
                 intent.putExtra(EXTRAMESSAGE, elements);
@@ -73,6 +76,7 @@ public class MainActivity extends AppCompatActivity implements TimerEditDialog.T
             }
         });
 
+        /*
         elements = new ArrayList<>();
         elements.add(new ListElement("Timer 1", ItemType.TIMER));
         elements.add(new ListElement("Timer 2 ", ItemType.TIMER));
@@ -94,8 +98,10 @@ public class MainActivity extends AppCompatActivity implements TimerEditDialog.T
         elements.add(loop);
         elements.add(loopend);
 
+
+         */
         //TODO Load on start
-        /*
+
         try {
             FileInputStream fis = openFileInput(FILENAME);
             ObjectInputStream is = new ObjectInputStream(fis);
@@ -133,7 +139,7 @@ public class MainActivity extends AppCompatActivity implements TimerEditDialog.T
             elements.add(loopend);
         }
 
-         */
+
         mAdapter = new ListElementAdapter(elements, getSupportFragmentManager());
         recyclerView.setAdapter(mAdapter);
 

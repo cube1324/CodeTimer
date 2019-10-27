@@ -9,17 +9,19 @@ public class ListElement implements Serializable {
     private String name;
     private ItemType type;
     private long number = 0;
+    private long save_number = 0;
     private ListElement relatedElement = null;
     private int depth = 1;
     private int relatedIndex;
 
-    public ListElement(String name, ItemType type, int number, ListElement relatedElement, int depth, int relatedIndex){
+    public ListElement(String name, ItemType type, int number, ListElement relatedElement, int depth, int relatedIndex, int save_number){
         this.name = name;
         this.type = type;
         this.number = number;
         this.relatedElement = relatedElement;
         this.depth = depth;
         this.relatedIndex = relatedIndex;
+        this.save_number = save_number;
     }
 
     public ListElement(String name, ItemType type){
@@ -45,6 +47,14 @@ public class ListElement implements Serializable {
                 r = super.toString();
         }
         return r;
+    }
+
+    public void setSave_number(long save_number) {
+        this.save_number = save_number;
+    }
+
+    public long getSave_number() {
+        return save_number;
     }
 
     public int getRelatedIndex() {
