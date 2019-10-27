@@ -92,7 +92,7 @@ public class TimerActivity extends AppCompatActivity {
     private int getNextPos(int pos){
         pos++;
         ListElement el = elements.get(pos);
-        if (pos > elements.size()-2){
+        if (pos > elements.size()-1 ){
             return -1;
         }
 
