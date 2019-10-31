@@ -306,7 +306,10 @@ public class MainActivity extends AppCompatActivity implements TimerEditDialog.T
         ListElement element = elements.get(pos);
         element.setName(name);
         element.setNumber(number);
+
+        element.getrelatedElement().setName(name);
         mAdapter.notifyItemChanged(pos);
+        mAdapter.notifyItemChanged(elements.indexOf(element.getrelatedElement()));
     }
 
     //TODO Save on Close

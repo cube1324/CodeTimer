@@ -55,7 +55,7 @@ public class LoopEditDialog extends AppCompatDialogFragment {
 
         number_picker = v.findViewById(R.id.number_picker);
         number_picker.setMaxValue(100);
-        number_picker.setMinValue(0);
+        number_picker.setMinValue(2);
         number_picker.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
             @Override
             public void onValueChange(NumberPicker picker, int oldVal, int newVal) {

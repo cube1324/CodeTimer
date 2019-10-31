@@ -5,4 +5,7 @@
     <string name="edit_dialog_picker_seperate">:</string>
     <string name="action_setting">Settings</string>
     <string name="action_add">Add</string>
+    <string name="loopstart_repeat">Repeat</string>
+    <string name="loopstart_times">times</string>
+    <string name="loopend_repeat">end repeat</string>
 </resources>
