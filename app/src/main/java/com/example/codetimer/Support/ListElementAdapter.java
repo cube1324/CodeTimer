@@ -65,8 +65,8 @@ public class ListElementAdapter extends RecyclerView.Adapter<ListElementViewHold
     }
 
     @Override
-    public void onBindViewHolder(@NonNull final ListElementViewHolder holder, int position) {
-        ListElement currentElement = elements.get(position);
+    public void onBindViewHolder(@NonNull final ListElementViewHolder holder, final int position) {
+        final ListElement currentElement = elements.get(position);
 
         switch (currentElement.getType()){
             case TIMER:
@@ -77,6 +77,20 @@ public class ListElementAdapter extends RecyclerView.Adapter<ListElementViewHold
                     public void onClick(View v) {
                         TimerEditDialog d = new TimerEditDialog(holder.getAdapterPosition(), holder);
                         d.show(mFragmentManager, "Edit Timer");
+                    }
+                });
+                holder.increase_button.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        currentElement.incNumberBy(10000);
+                        notifyItemChanged(holder.getAdapterPosition());
+                    }
+                });
+                holder.decrease_button.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        currentElement.incNumberBy(-10000);
+                        notifyItemChanged(holder.getAdapterPosition());
                     }
                 });
                 break;

@@ -53,7 +53,7 @@ public class MainActivity extends AppCompatActivity implements TimerEditDialog.T
         setContentView(R.layout.activity_main);
 
         recyclerView = findViewById(R.id.my_recycler_view);
-        recyclerView.hasFixedSize();
+        recyclerView.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
 
@@ -272,6 +272,19 @@ public class MainActivity extends AppCompatActivity implements TimerEditDialog.T
 
             case R.id.action_add:
                 elements.add(new ListElement("NewTimer", ItemType.TIMER));
+                mAdapter.notifyItemInserted(elements.size()-1);
+                return true;
+            case R.id.action_add_loop:
+                Log.v("AWDAWDAWDAWD", "awdAWdawd");
+                ListElement start = new ListElement("LOOP", ItemType.LOOPSTART);
+                ListElement end = new ListElement("LOOP END", ItemType.LOOPEND);
+                start.setrelatedElement(end);
+                end.setrelatedElement(start);
+                start.setNumber(4);
+                elements.add(start);
+                elements.add(end);
+                mAdapter.notifyItemInserted(elements.size()-1);
+                mAdapter.notifyItemInserted(elements.size()-2);
                 return true;
 
             default:
