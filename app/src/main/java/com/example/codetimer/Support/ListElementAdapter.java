@@ -1,10 +1,13 @@
 package com.example.codetimer.Support;
 
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.core.view.MotionEventCompat;
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -17,6 +20,8 @@ import java.util.LinkedList;
 public class ListElementAdapter extends RecyclerView.Adapter<ListElementViewHolder> {
     public ArrayList<ListElement> elements;
     private FragmentManager mFragmentManager;
+    private boolean buttonPressed;
+    private int counter;
     public ListElementAdapter(ArrayList<ListElement> initialElements, FragmentManager manager){
         elements = initialElements;
         mFragmentManager = manager;
@@ -79,20 +84,30 @@ public class ListElementAdapter extends RecyclerView.Adapter<ListElementViewHold
                         d.show(mFragmentManager, "Edit Timer");
                     }
                 });
-                holder.increase_button.setOnClickListener(new View.OnClickListener() {
+
+                holder.increase_button.setOnTouchListener(new View.OnTouchListener() {
                     @Override
-                    public void onClick(View v) {
-                        currentElement.incNumberBy(10000);
-                        notifyItemChanged(holder.getAdapterPosition());
+                    public boolean onTouch(View v, MotionEvent event) {
+                        if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                            currentElement.incNumberBy(10000);
+                            notifyItemChanged(holder.getAdapterPosition());
+                        }
+                        return true;
                     }
                 });
-                holder.decrease_button.setOnClickListener(new View.OnClickListener() {
+
+                holder.decrease_button.setOnTouchListener(new View.OnTouchListener() {
                     @Override
-                    public void onClick(View v) {
-                        currentElement.incNumberBy(-10000);
-                        notifyItemChanged(holder.getAdapterPosition());
+                    public boolean onTouch(View v, MotionEvent event) {
+                        if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                            currentElement.incNumberBy(-10000);
+                            notifyItemChanged(holder.getAdapterPosition());
+                        }
+                        return true;
                     }
                 });
+
+
                 break;
             case LOOPSTART:
                 holder.repeat_view.setText(currentElement.getNumber());
