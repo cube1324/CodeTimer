@@ -3,12 +3,14 @@ package com.example.codetimer;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.TextView;
 
 import com.example.codetimer.Support.ItemType;
@@ -27,9 +29,9 @@ public class TimerActivity extends AppCompatActivity {
     private CountDownTimer mCountDownTimer;
 
     private boolean TimerRunning = false;
+    private boolean isPaused = false;
     private long mTimeLeft;
     private int currentPos;
-    private int mRepsLeft = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +43,8 @@ public class TimerActivity extends AppCompatActivity {
 
         ActionBar ab = getSupportActionBar();
         ab.setDisplayHomeAsUpEnabled(true);
+
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         Intent intent = getIntent();
         elements = (ArrayList<ListElement>) intent.getSerializableExtra(MainActivity.EXTRAMESSAGE);
@@ -61,11 +65,27 @@ public class TimerActivity extends AppCompatActivity {
             }
         });
 
+        //Initialize Textviews
+        int i = 0;
+        while (elements.get(i).getType() != ItemType.TIMER){
+            i++;
+        }
+        text_view_countdown.setText(elements.get(i).getNumber());
+        name_view.setText(elements.get(i).getName());
+
     }
 
     private void startTimer() {
+        TimerRunning = true;
+
+        updateFloatingButton();
+
         name_view.setText(elements.get(currentPos).getName());
-        mTimeLeft = elements.get(currentPos).getRepetition();
+        if (isPaused){
+            isPaused = false;
+        }else {
+            mTimeLeft = elements.get(currentPos).getRepetition();
+        }
         mCountDownTimer = new CountDownTimer(mTimeLeft, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
@@ -76,25 +96,33 @@ public class TimerActivity extends AppCompatActivity {
             @Override
             public void onFinish() {
                 currentPos = getNextPos(currentPos);
-                Log.i("TIMER CURRENTPOS",""+currentPos);
                 if (currentPos == -1){
+                    //Timer Finished
+                    //Set Index to start
                     currentPos = getNextPos(currentPos);
                     TimerRunning = false;
+                    updateFloatingButton();
                     return;
                 }
                 startTimer();
             }
         }.start();
+    }
 
-        TimerRunning = true;
+    private void updateFloatingButton(){
+        if (TimerRunning){
+            timer_button.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_pause_32px));
+        } else{
+            timer_button.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_play_arrow_32px));
+        }
     }
 
     private int getNextPos(int pos){
         pos++;
-        ListElement el = elements.get(pos);
-        if (pos > elements.size()-2){
+        if (pos > elements.size()-1 ){
             return -1;
         }
+        ListElement el = elements.get(pos);
 
         if (el.getType() == ItemType.LOOPSTART){
             return getNextPos(pos);
@@ -119,6 +147,9 @@ public class TimerActivity extends AppCompatActivity {
     }
 
     private void pauseTimer(){
-
+        mCountDownTimer.cancel();
+        TimerRunning = false;
+        isPaused = true;
+        updateFloatingButton();
     }
 }

@@ -11,6 +11,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Rect;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -45,14 +46,14 @@ public class MainActivity extends AppCompatActivity implements TimerEditDialog.T
 
     private static int INDENT_INCREMENT = 2;
     public static String EXTRAMESSAGE = "MainActivity.ELEMENTS";
-    private String FILENAME = getFilesDir() + File.separator + "data";
+    private String FILENAME = "data_file";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         recyclerView = findViewById(R.id.my_recycler_view);
-        recyclerView.hasFixedSize();
+        recyclerView.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
 
@@ -76,30 +77,8 @@ public class MainActivity extends AppCompatActivity implements TimerEditDialog.T
             }
         });
 
-        /*
+
         elements = new ArrayList<>();
-        elements.add(new ListElement("Timer 1", ItemType.TIMER));
-        elements.add(new ListElement("Timer 2 ", ItemType.TIMER));
-
-        ListElement end = new ListElement("LOOPEND", ItemType.LOOPEND);
-        ListElement temp = new ListElement("LOOP", ItemType.LOOPSTART);
-
-        temp.setNumber(3);
-        temp.setrelatedElement(end);
-        end.setrelatedElement(temp);
-        elements.add(temp);
-        elements.add(end);
-
-        ListElement loop = new ListElement("Reapeat", ItemType.LOOPSTART);
-        ListElement loopend = new ListElement("End Reapeat", ItemType.LOOPEND);
-        loop.setrelatedElement(loopend);
-        loopend.setrelatedElement(loop);
-        loop.setNumber(10);
-        elements.add(loop);
-        elements.add(loopend);
-
-
-         */
         //TODO Load on start
 
         try {
@@ -143,7 +122,7 @@ public class MainActivity extends AppCompatActivity implements TimerEditDialog.T
         mAdapter = new ListElementAdapter(elements, getSupportFragmentManager());
         recyclerView.setAdapter(mAdapter);
 
-        ItemTouchHelper helper = new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(ItemTouchHelper.DOWN | ItemTouchHelper.UP,0){
+        ItemTouchHelper helper = new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(ItemTouchHelper.DOWN | ItemTouchHelper.UP,ItemTouchHelper.LEFT){
             @Override
             public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
                 //Element that is moved
@@ -254,7 +233,9 @@ public class MainActivity extends AppCompatActivity implements TimerEditDialog.T
 
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
-
+                int pos = viewHolder.getAdapterPosition();
+                elements.remove(pos);
+                mAdapter.notifyItemRemoved(pos);
             }
         });
         helper.attachToRecyclerView(recyclerView);
@@ -263,7 +244,9 @@ public class MainActivity extends AppCompatActivity implements TimerEditDialog.T
             @Override
             public void getItemOffsets(@NonNull Rect outRect, @NonNull View view, @NonNull RecyclerView parent, @NonNull RecyclerView.State state) {
                 outRect.bottom = 20;
-                outRect.left = 20 * elements.get(parent.getChildAdapterPosition(view)).getDepth();
+                if (parent.getChildAdapterPosition(view) != -1) {
+                    outRect.left = 20 * elements.get(parent.getChildAdapterPosition(view)).getDepth();
+                }
                 outRect.right = 20;
                 if (parent.getChildAdapterPosition(view) == 0){
                     outRect.top = 20;
@@ -289,6 +272,19 @@ public class MainActivity extends AppCompatActivity implements TimerEditDialog.T
 
             case R.id.action_add:
                 elements.add(new ListElement("NewTimer", ItemType.TIMER));
+                mAdapter.notifyItemInserted(elements.size()-1);
+                return true;
+            case R.id.action_add_loop:
+                Log.v("AWDAWDAWDAWD", "awdAWdawd");
+                ListElement start = new ListElement("LOOP", ItemType.LOOPSTART);
+                ListElement end = new ListElement("LOOP END", ItemType.LOOPEND);
+                start.setrelatedElement(end);
+                end.setrelatedElement(start);
+                start.setNumber(4);
+                elements.add(start);
+                elements.add(end);
+                mAdapter.notifyItemInserted(elements.size()-1);
+                mAdapter.notifyItemInserted(elements.size()-2);
                 return true;
 
             default:
@@ -310,11 +306,13 @@ public class MainActivity extends AppCompatActivity implements TimerEditDialog.T
         ListElement element = elements.get(pos);
         element.setName(name);
         element.setNumber(number);
+
+        element.getrelatedElement().setName(name);
         mAdapter.notifyItemChanged(pos);
+        mAdapter.notifyItemChanged(elements.indexOf(element.getrelatedElement()));
     }
 
     //TODO Save on Close
-    /*
     public void onStop(){
         super.onStop();
         try {
@@ -323,11 +321,13 @@ public class MainActivity extends AppCompatActivity implements TimerEditDialog.T
             for (ListElement el : elements){
                 os.writeObject(el);
             }
+            //Write Null as End Flag
+            os.writeObject(null);
             os.close();
             fos.close();
         }catch (Exception e){
             e.printStackTrace();
         }
     }
-     */
+
 }

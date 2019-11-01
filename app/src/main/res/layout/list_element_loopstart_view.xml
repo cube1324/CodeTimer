@@ -23,7 +23,7 @@
         android:id="@+id/repeat_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Repeat 10 Times"
+        android:text="99"
         android:textSize="30sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -40,5 +40,27 @@
         android:src="@drawable/ic_edit_30px"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/text_view_repeat"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:text="@string/loopstart_repeat"
+        android:textSize="30sp"
+        app:layout_constraintEnd_toStartOf="@+id/repeat_view"
+        app:layout_constraintTop_toBottomOf="@+id/name_view" />
+
+    <TextView
+        android:id="@+id/text_view_times"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:text="@string/loopstart_times"
+        android:textSize="30sp"
+        app:layout_constraintStart_toEndOf="@+id/repeat_view"
+        app:layout_constraintTop_toBottomOf="@+id/name_view" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
