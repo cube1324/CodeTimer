@@ -33,8 +33,6 @@ public class ListElement implements Serializable {
         String r;
         switch (this.getType()){
             case TIMER:
-                //long min = TimeUnit.MINUTES.convert(number, TimeUnit.MILLISECONDS) % 60;
-                //long sec = TimeUnit.SECONDS.convert(number, TimeUnit.MILLISECONDS) % 60;
                 int min = (int) number / 1000 / 60;
                 int sec = (int) number / 1000 % 60;
                 r =  String.format("%02d : %02d", min, sec);
@@ -84,7 +82,11 @@ public class ListElement implements Serializable {
     }
 
     public void incNumberBy(long x){
-        this.number += x;
+        if (this.number + x < 0){
+            this.number = 0;
+        }else {
+            this.number += x;
+        }
     }
 
     public void setrelatedElement(ListElement endElement) {
