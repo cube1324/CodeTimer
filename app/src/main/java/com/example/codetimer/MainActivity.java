@@ -233,9 +233,39 @@ public class MainActivity extends AppCompatActivity implements TimerEditDialog.T
 
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+                //pos of deleted Element
                 int pos = viewHolder.getAdapterPosition();
-                elements.remove(pos);
-                mAdapter.notifyItemRemoved(pos);
+
+                if (elements.get(pos).getType() == ItemType.LOOPSTART) {
+                    //Get LOOPEND
+                    int related_pos = elements.indexOf(elements.get(pos).getrelatedElement());
+
+                    //set indent of Loopelement one back
+                    for (int i = pos + 1; i < related_pos; i++) {
+                        elements.get(i).incDepthBy(-INDENT_INCREMENT);
+                    }
+                    //delete both elements
+                    elements.remove(related_pos);
+                    mAdapter.notifyItemRemoved(related_pos);
+
+                    elements.remove(pos);
+                    mAdapter.notifyItemRemoved(pos);
+
+                }else if (elements.get(pos).getType() == ItemType.LOOPEND){
+                    int related_pos = elements.indexOf(elements.get(pos).getrelatedElement());
+                    for (int i = related_pos + 1; i < pos; i++) {
+                        elements.get(i).incDepthBy(-INDENT_INCREMENT);
+                    }
+                    elements.remove(pos);
+                    mAdapter.notifyItemRemoved(pos);
+
+                    elements.remove(related_pos);
+                    mAdapter.notifyItemRemoved(related_pos);
+                }else{
+                    elements.remove(pos);
+                    mAdapter.notifyItemRemoved(pos);
+                }
+
             }
         });
         helper.attachToRecyclerView(recyclerView);
@@ -275,7 +305,6 @@ public class MainActivity extends AppCompatActivity implements TimerEditDialog.T
                 mAdapter.notifyItemInserted(elements.size()-1);
                 return true;
             case R.id.action_add_loop:
-                Log.v("AWDAWDAWDAWD", "awdAWdawd");
                 ListElement start = new ListElement("LOOP", ItemType.LOOPSTART);
                 ListElement end = new ListElement("LOOP END", ItemType.LOOPEND);
                 start.setrelatedElement(end);
