@@ -65,7 +65,6 @@ public class MainActivity extends AppCompatActivity implements TimerEditDialog.T
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(), TimerActivity.class);
-                //String json = new Gson().toJson(elements);
                for (ListElement el : elements){
                    if (el.getType() == ItemType.LOOPEND | el.getType() == ItemType.LOOPSTART){
                        el.setRelatedIndex(elements.indexOf(el.getrelatedElement()));
@@ -304,6 +303,7 @@ public class MainActivity extends AppCompatActivity implements TimerEditDialog.T
                 elements.add(new ListElement("NewTimer", ItemType.TIMER));
                 mAdapter.notifyItemInserted(elements.size()-1);
                 return true;
+
             case R.id.action_add_loop:
                 ListElement start = new ListElement("LOOP", ItemType.LOOPSTART);
                 ListElement end = new ListElement("LOOP END", ItemType.LOOPEND);
