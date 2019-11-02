@@ -11,7 +11,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Rect;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -23,18 +22,13 @@ import com.example.codetimer.Support.ListElementAdapter;
 import com.example.codetimer.Support.LoopEditDialog;
 import com.example.codetimer.Support.TimerEditDialog;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.gson.Gson;
 
-import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity implements TimerEditDialog.TimerEditListener, LoopEditDialog.LoopEditListener {
@@ -46,7 +40,7 @@ public class MainActivity extends AppCompatActivity implements TimerEditDialog.T
 
     private static int INDENT_INCREMENT = 2;
     public static String EXTRAMESSAGE = "MainActivity.ELEMENTS";
-    private String FILENAME = "data_file";
+    private String FILENAME = "elements_file";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -81,7 +75,7 @@ public class MainActivity extends AppCompatActivity implements TimerEditDialog.T
         //TODO Load on start
 
         try {
-            FileInputStream fis = openFileInput(FILENAME);
+            FileInputStream fis = openFileInput(EXTRAMESSAGE);
             ObjectInputStream is = new ObjectInputStream(fis);
             boolean cond = true;
             while (cond){
@@ -95,26 +89,35 @@ public class MainActivity extends AppCompatActivity implements TimerEditDialog.T
             is.close();
             fis.close();
         } catch (Exception e) {
-            e.printStackTrace();
-            elements.add(new ListElement("NiceTimer", ItemType.TIMER));
-            elements.add(new ListElement("NiceTimer", ItemType.TIMER));
+            ListElement el1 = new ListElement("Plank", ItemType.TIMER);
+            el1.setNumber(60000);
+            el1.incDepthBy(INDENT_INCREMENT);
 
-            ListElement end = new ListElement("LOOPEND", ItemType.LOOPEND);
-            ListElement temp = new ListElement("LOOP", ItemType.LOOPSTART);
+            ListElement el2 = new ListElement("Side Plank", ItemType.TIMER);
+            el2.setNumber(60000);
+            el2.incDepthBy(INDENT_INCREMENT);
 
-            temp.setNumber(3);
-            temp.setrelatedElement(end);
-            end.setrelatedElement(temp);
-            elements.add(temp);
+            ListElement el3 = new ListElement("Hollow Body Hold", ItemType.TIMER);
+            el3.setNumber(60000);
+            el3.incDepthBy(INDENT_INCREMENT);
+
+
+            ListElement el4 = new ListElement("Rest", ItemType.TIMER);
+            el4.setNumber(120000);
+            el4.incDepthBy(INDENT_INCREMENT);
+
+            ListElement end = new ListElement("Core Workout", ItemType.LOOPEND);
+            ListElement start = new ListElement("Core Workout", ItemType.LOOPSTART);
+            start.setNumber(3);
+            start.setrelatedElement(end);
+            end.setrelatedElement(start);
+
+            elements.add(start);
+            elements.add(el1);
+            elements.add(el2);
+            elements.add(el3);
+            elements.add(el4);
             elements.add(end);
-
-            ListElement loop = new ListElement("Reapeat", ItemType.LOOPSTART);
-            ListElement loopend = new ListElement("End Reapeat", ItemType.LOOPEND);
-            loop.setrelatedElement(loopend);
-            loopend.setrelatedElement(loop);
-            loop.setNumber(10);
-            elements.add(loop);
-            elements.add(loopend);
         }
 
 

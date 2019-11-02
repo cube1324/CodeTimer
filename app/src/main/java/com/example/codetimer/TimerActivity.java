@@ -30,6 +30,9 @@ public class TimerActivity extends AppCompatActivity {
 
     private TextView text_view_countdown;
     private TextView name_view;
+    private TextView loop_name;
+    private TextView loop_repetition;
+    private TextView next_timer;
     private FloatingActionButton timer_button;
     private CountDownTimer mCountDownTimer;
 
@@ -60,16 +63,17 @@ public class TimerActivity extends AppCompatActivity {
         //Keep Screen on Permanently
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
+        //Initialize Elements in view
+        text_view_countdown = findViewById(R.id.text_view_countdown);
+        name_view = findViewById(R.id.name_view);
+        loop_name = findViewById(R.id.loop_name_view);
+        loop_repetition = findViewById(R.id.loop_current_view);
+        next_timer = findViewById(R.id.next_up_name);
+        timer_button = findViewById(R.id.timer_button);
 
         //Get elements from Mainactivity
         Intent intent = getIntent();
         elements = (ArrayList<ListElement>) intent.getSerializableExtra(MainActivity.EXTRAMESSAGE);
-        currentPos = getNextPos(-1);
-
-        //Initialize Elements in view
-        text_view_countdown = findViewById(R.id.text_view_countdown);
-        name_view = findViewById(R.id.name_view);
-        timer_button = findViewById(R.id.timer_button);
 
         timer_button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -82,6 +86,8 @@ public class TimerActivity extends AppCompatActivity {
             }
         });
 
+        currentPos = getNextPos(-1);
+
         //Initialize Textviews
         int i = 0;
         while (elements.get(i).getType() != ItemType.TIMER){
@@ -89,10 +95,19 @@ public class TimerActivity extends AppCompatActivity {
         }
         text_view_countdown.setText(elements.get(i).getNumber());
         name_view.setText(elements.get(i).getName());
+        setNextTimer();
 
         //Load MediaPlayer
         high_player = MediaPlayer.create(this, R.raw.middle_beep);
         low_player = MediaPlayer.create(this, R.raw.low_beep);
+    }
+
+    private void setNextTimer(){
+        if (getNextPos(currentPos) != -1){
+            next_timer.setText(elements.get(getNextPos(currentPos)).getName());
+        } else {
+            next_timer.setText("Done");
+        }
     }
 
     private void startTimer() {
@@ -130,6 +145,8 @@ public class TimerActivity extends AppCompatActivity {
                     updateFloatingButton();
                     return;
                 }
+
+                setNextTimer();
                 startTimer();
             }
         }.start();
@@ -143,6 +160,7 @@ public class TimerActivity extends AppCompatActivity {
         }
     }
 
+    //TODO ADD proper display of currentloop and repetitions left
     private int getNextPos(int pos){
         pos++;
         if (pos > elements.size()-1 ){
@@ -151,6 +169,8 @@ public class TimerActivity extends AppCompatActivity {
         ListElement el = elements.get(pos);
 
         if (el.getType() == ItemType.LOOPSTART){
+            loop_name.setText(el.getName());
+            loop_repetition.setText(el.getNumber());
             return getNextPos(pos);
         }
         if (el.getType() == ItemType.LOOPEND){
@@ -180,9 +200,11 @@ public class TimerActivity extends AppCompatActivity {
     }
 
     public void onStop(){
-        super.onStop();
-        mCountDownTimer.cancel();
+        if (mCountDownTimer != null) {
+            mCountDownTimer.cancel();
+        }
         high_player.release();
         low_player.release();
+        super.onStop();
     }
 }
